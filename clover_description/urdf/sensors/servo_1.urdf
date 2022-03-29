@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<robot name="servo_1" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="servo_1" params="name parent x y z roll pitch yaw">
+    <joint name="${name}_joint" type="fixed">
+    <origin xyz="${x} ${y} ${z}"
+              rpy="${roll} ${pitch} ${yaw}"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+
+    <link name="${name}_link">
+      <inertial>
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.000000017" ixy="0" ixz="0" iyy="0.000000017" iyz="0" izz="0.000000017" />
+      </inertial>
+      <visual>
+        <origin xyz="3.99 16.02 -0.02" rpy="0 0 0" />
+        <geometry>
+          <!-- <box size="0.1 0.1 0.1" /> -->
+          <mesh filename="package://clover_description/meshes/clover4/servo.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+      </collision>
+    </link>
+
+  <joint name="rotater_joint" type="continuous">
+    <parent link="servo_1_link"/>
+    <child link="rotater"/>
+    <origin xyz="1 1 1.1" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+      <link name="rotater">
+      <inertial>
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.000000017" ixy="0" ixz="0" iyy="0.000000017" iyz="0" izz="0.000000017" />
+      </inertial>
+      <visual>
+        <origin xyz="3.99 16.02 -0.02" rpy="0 0 0" />
+        <geometry>
+          <!-- <box size="0.1 0.1 0.1" /> -->
+          <mesh filename="package://clover_description/meshes/clover4/servo.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01" />
+        </geometry>
+      </collision>
+    </link>
+
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/clover</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<robot name="servo_1" xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:macro name="servo_1" params="name parent x y z roll pitch yaw">
+   <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="0.001" /> <!-- arbitrary value for mass -->
+  <xacro:property name="mass1" value="0.001" /> <!-- arbitrary value for mass -->
+  <xacro:property name="radius" value="0.05" /> <!-- Radii of the cylinder-->
+  <xacro:property name="length1" value="0.3" /> <!-- axel_holder -->
+  <xacro:property name="length2" value="0.2" /> <!-- Rotator -->
+  <xacro:property name="width" value="0.1" /> <!-- width of the beam -->
+  <xacro:property name="offset" value="0" /> <!-- width of the beam -->
+
+  <!-- <xacro:include filename="$(find clover_description)/urdf/sensors/servo.gazebo" /> -->
+  <!-- <xacro:include filename="$(find clover_description)/urdf/sensors/materials_servo.xacro" /> -->
+  
+    <joint name="${name}_joint" type="fixed">
+    <origin xyz="${x} ${y} ${z}"
+              rpy="${roll} ${pitch} ${yaw}"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+    </joint>
+
+  <link name="${name}_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${length1} ${length1} ${length1}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${length1} ${length1} ${length1}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${mass1}"/>
+     <inertia ixx="0.000000017" ixy="0" ixz="0" iyy="0.000000017" iyz="0" izz="0.000000017" />
+    </inertial>
+  </link>
+<!-- 
+  <joint name="joint152" type="continuous">
+    <parent link="${name}_link"/>
+    <child link="rotater"/>
+    <origin xyz="${x} ${y} ${z+0.1}" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+
+  <link name="rotater">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${length2} ${length2} ${length2}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${length2} ${length2} ${length2}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${length2/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+     <inertia ixx="0.000000017" ixy="0" ixz="0" iyy="0.000000017" iyz="0" izz="0.000000017" />
+    </inertial>
+  </link>
+
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint152">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission> -->
+
+
+</xacro:macro>
+</robot>

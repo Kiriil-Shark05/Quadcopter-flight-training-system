@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<robot name="clover" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="main_camera" default="true"/>
+  <xacro:arg name="rangefinder" default="true"/>
+  <xacro:arg name="ultrasonic_sensor_left" default="true"/>
+  <xacro:arg name="ultrasonic_sensor_right" default="true"/>
+  <xacro:arg name="ultrasonic_sensor_front" default="true"/>
+  <xacro:arg name="ultrasonic_sensor_back" default="true"/>
+  <xacro:arg name="servo_1" default="true"/>
+  <xacro:arg name="led" default="true"/>
+  <xacro:arg name="gps" default="true"/>
+  <xacro:arg name="maintain_camera_rate" default="false"/>
+  <xacro:arg name="use_clover_physics" default="false"/>
+
+  <xacro:include filename="clover4_base.xacro" />
+  <xacro:include filename="../sensors/rpi_cam.urdf.xacro"/>
+  <xacro:include filename="../sensors/distance_sensor.urdf.xacro"/>
+  <xacro:include filename="../sensors/ultrasonic_sensor_left.urdf.xacro"/>
+  <xacro:include filename="../sensors/ultrasonic_sensor_right.urdf.xacro"/>
+  <xacro:include filename="../sensors/ultrasonic_sensor_front.urdf.xacro"/>
+  <xacro:include filename="../sensors/ultrasonic_sensor_back.urdf.xacro"/>
+  <!-- <xacro:include filename="../sensors/servo_1.xacro"/> -->
+  <xacro:include filename="../leds/led_strip.xacro"/>
+
+  <!-- Create camera plugin -->
+  <xacro:if value="$(arg main_camera)">
+    <xacro:rpi_cam name="main_camera" parent="base_link" x="0.055" y="0.0" z="-0.03" roll="0" pitch="${pi / 2}" yaw="0" width="320" height="240" rate="40" do_throttling="$(arg maintain_camera_rate)"/>
+  </xacro:if>
+
+  <!-- Create rangefinder plugin -->
+  <xacro:if value="$(arg rangefinder)">
+    <xacro:distance_sensor parent="base_link" x="0.0" y="0.0" z="-0.04" roll="0" pitch="${pi / 2}" yaw="0"/>
+  </xacro:if>
+
+    <!-- Create ultrasonic_sensor plugins -->
+  <xacro:if value="$(arg ultrasonic_sensor_left)">
+    <xacro:ultrasonic_sensor_left name="ultrasonic_sensor_left" parent="base_link" x="0" y="0.16" z="0.07" roll="0" pitch="0" yaw="1.5" ros_topic="/ultrasonic_sensor_left/range" update_rate="5" min_range="0.02" max_range="3" field_of_view="0.13" ray_count="5"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg ultrasonic_sensor_right)">
+    <xacro:ultrasonic_sensor_right name="ultrasonic_sensor_right" parent="base_link" x="0" y="-0.16" z="0.07" roll="0" pitch="0" yaw="-1.5" ros_topic="/ultrasonic_sensor_right/range" update_rate="5" min_range="0.02" max_range="3" field_of_view="0.13" ray_count="5"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg ultrasonic_sensor_front)">
+    <xacro:ultrasonic_sensor_front name="ultrasonic_sensor_front" parent="base_link" x="0.16" y="0" z="0.07" roll="0" pitch="0" yaw="0" ros_topic="/ultrasonic_sensor_front/range" update_rate="5" min_range="0.02" max_range="3" field_of_view="0.13" ray_count="5"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg ultrasonic_sensor_back)">
+    <xacro:ultrasonic_sensor_back name="ultrasonic_sensor_back" parent="base_link" x="-0.16" y="0" z="0.07" roll="0" pitch="0" yaw="-3" ros_topic="/ultrasonic_sensor_back/range" update_rate="5" min_range="0.02" max_range="3" field_of_view="0.13" ray_count="5"/>
+  </xacro:if>
+
+  <!-- <xacro:if value="$(arg servo_1)">
+    <xacro:servo_1 name="servo_1" parent="base_link" x="5" y="5" z="5" roll="0" pitch="0" yaw="0"/>
+  </xacro:if> -->
+
+  <!-- Instantiate LED strip -->
+  <xacro:if value="$(arg led)">
+    <xacro:led_strip
+      name="led"
+      parent="base_link"
+      radius="0.08"
+      bulb_radius="0.006"
+      led_count="58"
+      use_plugin="true"
+      z="-0.002"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg gps)">
+    <gazebo>
+      <include>
+        <uri>model://gps</uri>
+        <pose>0.1 0 0 0 0 0</pose>
+        <name>gps0</name>
+      </include>
+      <joint name='gps0_joint' type='fixed'>
+        <child>gps0::link</child>
+        <parent>base_link</parent>
+      </joint>  
+    </gazebo>
+  </xacro:if>
+
+</robot>
